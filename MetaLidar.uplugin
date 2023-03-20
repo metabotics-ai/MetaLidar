@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "MetaLidar",
+	"Description": "LiDAR sensor simulation plugin for Unreal Engine 5",
+	"Category": "Other",
+	"CreatedBy": "metabotics",
+	"CreatedByURL": "https://github.com/metabotics-ai",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "MetaLidar",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
