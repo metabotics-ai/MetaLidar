@@ -1,0 +1,11 @@
+/.ignore
+/Makefile
+/core
+
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+.vscode/
+.vs/
