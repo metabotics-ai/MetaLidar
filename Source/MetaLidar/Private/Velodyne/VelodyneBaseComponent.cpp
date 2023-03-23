@@ -15,14 +15,14 @@ UVelodyneBaseComponent::UVelodyneBaseComponent()
   SupportMultithread = FPlatformProcess::SupportsMultithreading();
 
   // Set-up initial values
-  SensorModel          = EModelName::eVLP16;
-  SamplingRate         = EFrequency::eSR10;
-  ReturnMode           = ELaserReturnMode::eStrongest;
+  SensorModel          = EModelName::VLP16;
+  SamplingRate         = EFrequency::SR10;
+  ReturnMode           = ELaserReturnMode::Strongest;
   SensorIP             = FString(TEXT("192.168.1.201"));
   DestinationIP        = FString(TEXT("192.168.1.100"));
   ScanPort             = 2368;
   PositionPort         = 8308;
-  EnablePositionSensor = false;
+  //EnablePositionSensor = false;
 }
 
 
@@ -271,6 +271,21 @@ void UVelodyneBaseComponent::GetScanData()
   );
 }
 
+FVector UVelodyneBaseComponent::GetActorLocation()
+{
+  return GetOwner()->GetActorLocation();
+}
+
+FRotator UVelodyneBaseComponent::GetActorRotation()
+{
+  return GetOwner()->GetActorRotation();
+}
+
+uint32 UVelodyneBaseComponent::GetTimestampMicroseconds()
+{
+  return (uint32)(fmod(GetWorld()->GetTimeSeconds(), 3600.f) * 1000000); // sec -> microsec
+}
+
 void UVelodyneBaseComponent::GenerateDataPacket(uint32 TimeStamp)
 {
   // Packet should be encoded based on Sensor Model & Scanning Mode
@@ -334,12 +349,176 @@ void UVelodyneBaseComponent::GenerateDataPacket(uint32 TimeStamp)
   PacketIndex += UE_ARRAY_COUNT(TailData);
 }
 
-FVector UVelodyneBaseComponent::GetActorLocation()
+void UVelodyneBaseComponent::GeneratePositionPacket(uint32 TimeStamp)
 {
-  return GetOwner()->GetActorLocation();
+  // Packet should be encoded based on Sensor Model & Scanning Mode
+  uint8 UnusedPacket[187]   = {0};
+  uint8 ReservedPacket[178] = {0};
+  uint8 NMEAPacket[128]     = {0};
+  uint8 TimeStampPacket[4]  = {0};
+  uint8 OneBytePacket[1]    = {0};
+  uint8 TwoBytePacket[2]    = {0};
+  uint8 FourBytePacket[4]   = {0};
+
+  int32 PacketIndex = 0;
+
+  // reserved (unused)
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, UnusedPacket, UE_ARRAY_COUNT(UnusedPacket));
+  PacketIndex += UE_ARRAY_COUNT(UnusedPacket);
+
+  // Temperature of top board (0 to 150°C)
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, OneBytePacket, UE_ARRAY_COUNT(OneBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(OneBytePacket);
+
+  // Temperature of bottom board (0 to 150°C)
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, OneBytePacket, UE_ARRAY_COUNT(OneBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(OneBytePacket);
+
+  // Temperature when ADC calibration last ran (0 to 150°C)
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, OneBytePacket, UE_ARRAY_COUNT(OneBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(OneBytePacket);
+
+  // Change in temperature since last ADC calibration (-150 to 150°C)
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, TwoBytePacket, UE_ARRAY_COUNT(TwoBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(TwoBytePacket);
+
+  // Elapsed seconds since last ADC calibration (0 to 2^32-1)
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, FourBytePacket, UE_ARRAY_COUNT(FourBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(FourBytePacket);
+
+  // Reason for the last ADC calibration
+  // 0: No calibration
+  // 1: Power-on calibration performed
+  // 2: Manual calibration performed
+  // 3: Delta temperature calibration performed
+  // 4: Periodic calibration performed
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, OneBytePacket, UE_ARRAY_COUNT(OneBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(OneBytePacket);
+
+  // Bitmask indicating current status of ADC calibration
+  // These bit fields are not mutually exclusive. The condition is True if the bit field value is 1.
+  // b0: Calibration in progress
+  // b1: Delta temperature limit has been met
+  // b2: Periodic time elapsed limit has been met
+  // Each status bit reflects the current sensor condition but does not imply any calibration occurred.
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, OneBytePacket, UE_ARRAY_COUNT(OneBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(OneBytePacket);
+
+  // µsec since top of the hour
+  TimeStampPacket[0] = TimeStamp & 0x000000FF;
+  TimeStampPacket[1] = (TimeStamp & 0x0000FF00) >> 8;
+  TimeStampPacket[2] = (TimeStamp & 0x00FF0000) >> 16;
+  TimeStampPacket[3] = (TimeStamp & 0xFF000000) >> 24;
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, TimeStampPacket, UE_ARRAY_COUNT(TimeStampPacket));
+  PacketIndex += UE_ARRAY_COUNT(TimeStampPacket);
+
+  // Pulse Per Second (PPS) status
+  // 0: Absent
+  // 1: Synchronizing
+  // 2: Locked
+  // 3: Error
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, OneBytePacket, UE_ARRAY_COUNT(OneBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(OneBytePacket);
+
+  // Thermal status
+  // 0: Ok
+  // 1: Thermal shutdown
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, OneBytePacket, UE_ARRAY_COUNT(OneBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(OneBytePacket);
+
+  // Last shutdown temperature
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, OneBytePacket, UE_ARRAY_COUNT(OneBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(OneBytePacket);
+
+  // Temperature of unit at power up
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, OneBytePacket, UE_ARRAY_COUNT(OneBytePacket));
+  PacketIndex += UE_ARRAY_COUNT(OneBytePacket);
+
+  // NMEA sentence (GPRMC or GPGGA)
+  // [To-Do] Should be implemented
+  // if (EnablePositionSensor)
+  // {
+  //   ASCIItoHEX("$GPRMC,205948,A,3716.6694,N,12153.4550,W,000.0,078.4,260715,013.9,E,D*07", NMEAPacket);
+  //   //FString Fs = FString(UTF8_TO_TCHAR(NMEAPacket));
+  //   //UE_LOG(LogTemp, Warning, TEXT("%s"), *Fs);
+  //   FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, NMEAPacket, UE_ARRAY_COUNT(NMEAPacket));
+  // }
+  // else
+  {
+    FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, NMEAPacket, UE_ARRAY_COUNT(NMEAPacket));
+  }
+
+  PacketIndex += UE_ARRAY_COUNT(NMEAPacket);
+
+  // reserved
+  FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, ReservedPacket, UE_ARRAY_COUNT(ReservedPacket));
 }
 
-FRotator UVelodyneBaseComponent::GetActorRotation()
+std::string UVelodyneBaseComponent::DecToHexa(int n)
 {
-  return GetOwner()->GetActorRotation();
+  // char array to store hexadecimal number
+  char hexaDeciNum[100];
+
+  // counter for hexadecimal number array
+  int i = 0;
+  while (n != 0)
+  {
+    // temporary variable to store remainder
+    int temp = 0;
+
+    // storing remainder in temp variable.
+    temp = n % 16;
+
+    // check if temp < 10
+    if (temp < 10) {
+      hexaDeciNum[i] = temp + 48;
+      i++;
+    }
+    else {
+      hexaDeciNum[i] = temp + 55;
+      i++;
+    }
+
+    n = n / 16;
+  }
+
+  std::string answer = "";
+
+  // printing hexadecimal number array in reverse order
+  for (int j = i - 1; j >= 0; j--) {
+    answer += hexaDeciNum[j];
+  }
+
+  return answer;
+}
+
+void UVelodyneBaseComponent::ASCIItoHEX(std::string ascii, uint8 hex[])
+{
+  // Initialize final String
+  std::string strhex = "";
+
+  // Make a loop to iterate through
+  // every character of ascii string
+  for (int i = 0; i < ascii.length(); i++)
+  {
+    // Take a char from
+    // position i of string
+    char ch = ascii[i];
+
+    // Cast char to integer and
+    // find its ascii value
+    int tmp = (int)ch;
+
+    // Change this ascii value
+    // integer to hexadecimal value
+    std::string part = DecToHexa(tmp);
+
+    // Add this hexadecimal value
+    // to final string.
+    strhex += part;
+  }
+
+  // Return the final
+  // string hex
+  strcpy( reinterpret_cast<char*>( hex ), strhex.c_str() );
 }

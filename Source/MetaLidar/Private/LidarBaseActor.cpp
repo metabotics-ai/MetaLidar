@@ -19,11 +19,6 @@ ALidarBaseActor::ALidarBaseActor() : PacketTimestamp(0)
 
   UdpScan = CreateDefaultSubobject<UUDPComponent>("UdpComponent");
   this->AddOwnedComponent(UdpScan);
-
-  if(UdpScan)
-  {
-    ConfigureUDPScan();
-  }
 }
 
 // Called when the game starts or when spawned
@@ -31,7 +26,13 @@ void ALidarBaseActor::BeginPlay()
 {
   Super::BeginPlay();
 
-  //FTimespan ThreadSleepTime = FTimespan::FromMilliseconds(1.367);
+  if(UdpScan)
+  {
+    ConfigureUDPScan();
+    UdpScan->OpenSendSocket(UdpScan->Settings.SendIP, UdpScan->Settings.SendPort);
+    UdpScan->OpenReceiveSocket(UdpScan->Settings.ReceiveIP, UdpScan->Settings.SendPort);
+  }
+
   FTimespan ThreadSleepTime =
   FTimespan::FromMilliseconds(Lidar->Sensor.NumberDataBlock * (Lidar->Sensor.NumberDataChannel / Lidar->Sensor.NumberLaserEmitter) * (0.000001f * FIRING_CYCLE));
   //Lidar->Sensor.NumberDataBlock * (Lidar->Sensor.NumberDataChannel / Lidar->Sensor.NumberLaserEmitter) * (0.000001f * FIRING_CYCLE); // nano sec -> milli sec
