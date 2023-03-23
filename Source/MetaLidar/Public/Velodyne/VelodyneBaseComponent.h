@@ -20,30 +20,30 @@ class PacketGenerationTask;
 UENUM(BlueprintType)
 enum EModelName
 {
-  eHDL_32     UMETA(DisplayName = "HDL-32"),
-  eVLP16      UMETA(DisplayName = "VLP-16"),
-  ePUCK_LITE	 UMETA(DisplayName = "Puck-Lite"),
-  ePUCK_HIRES UMETA(DisplayName = "Puck-HiRes"),
-  eVLP_32C    UMETA(DisplayName = "VLP-32C"),
-  eVELARRAY   UMETA(DisplayName = "Velarray"),
-  eVLS_128    UMETA(DisplayName = "VLS-128")
+  HDL_32     UMETA(DisplayName = "HDL-32"),
+  VLP16      UMETA(DisplayName = "VLP-16"),
+  PUCK_LITE	 UMETA(DisplayName = "Puck-Lite"),
+  PUCK_HIRES UMETA(DisplayName = "Puck-HiRes"),
+  VLP_32C    UMETA(DisplayName = "VLP-32C"),
+  VELARRAY   UMETA(DisplayName = "Velarray"),
+  VLS_128    UMETA(DisplayName = "VLS-128")
 };
 
 UENUM(BlueprintType)
 enum EFrequency
 {
-  eSR05 UMETA(DisplayName = "5 Hz"),
-  eSR10 UMETA(DisplayName = "10 Hz"),
-  eSR15 UMETA(DisplayName = "15 Hz"),
-  eSR20 UMETA(DisplayName = "20 Hz")
+  SR05 UMETA(DisplayName = "5 Hz"),
+  SR10 UMETA(DisplayName = "10 Hz"),
+  SR15 UMETA(DisplayName = "15 Hz"),
+  SR20 UMETA(DisplayName = "20 Hz")
 };
 
 UENUM(BlueprintType)
 enum ELaserReturnMode
 {
-  eStrongest  UMETA(DisplayName = "Strongest"),
-  eLastReturn UMETA(DisplayName = "Last Return"),
-  eDualReturn UMETA(DisplayName = "Dual Return")
+  Strongest  UMETA(DisplayName = "Strongest"),
+  LastReturn UMETA(DisplayName = "Last Return"),
+  DualReturn UMETA(DisplayName = "Dual Return")
 };
 
 USTRUCT()
@@ -99,8 +99,8 @@ public:
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velodyne")
   int32 PositionPort;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velodyne")
-  bool EnablePositionSensor;
+  //UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velodyne")
+  //bool EnablePositionSensor;
 
   FVelodyneLidar Sensor;
 
@@ -117,6 +117,14 @@ public:
   void GenerateDataPacket(uint32 TimeStamp);
 
   /**
+  * Generate position packet data based on GNSS measurement.
+  * !! Not implemented yet !!
+  *
+  * @param TimeStamp current time of game in microseconds
+  */
+  void GeneratePositionPacket(uint32 TimeStamp);
+
+  /**
   * Calculate intensity based on physics material reflectivity
   *
   * @param Surface Name of physical material
@@ -127,14 +135,29 @@ public:
   uint8 GetIntensity(const FString Surface, const float Distance) const;
 
   /**
-	* Get current location of Actor.
-	*/
-	FVector GetActorLocation();
+  * Get current location of Actor.
+  */
+  FVector GetActorLocation();
 
-	/**
-	* Get current rotation of Actor.
-	*/
-	FRotator GetActorRotation();
+  /**
+  * Get current rotation of Actor.
+  */
+  FRotator GetActorRotation();
+
+  /**
+  * Get current time of game.
+  */
+  uint32 GetTimestampMicroseconds();
+
+  /**
+  * Convert decimal to hexadecimal.
+  */
+  std::string DecToHexa(int n);
+
+  /**
+  * Convert ASCII to HEX.
+  */
+  void ASCIItoHEX(std::string ascii, uint8 hex[]);
 
 protected:
   // Called when the game starts
