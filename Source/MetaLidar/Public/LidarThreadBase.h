@@ -1,5 +1,5 @@
 /*
-* This is my UE Multi-threading base
+* This is based on Rama's UE Multi-threading
 *
 *	This is a Throttled Thread, because you indicate the tick rate when creating the thread.
 *
