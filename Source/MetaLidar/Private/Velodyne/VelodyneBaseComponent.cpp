@@ -193,8 +193,9 @@ uint8 UVelodyneBaseComponent::GetIntensity(const FString Surface, const float Di
   uint8 MaxReflectivity = 0;
   uint8 MinReflectivity = 0;
 
-  if (Surface.Compare(TEXT("PM_RetroReflector")) == 0) {
-    MaxReflectivity = 200;
+  if (Surface.Contains(TEXT("PM_Reflector"), ESearchCase::CaseSensitive)) {
+    // https://docs.unrealengine.com/5.0/en-US/API/Runtime/Core/Containers/FString/RightChop/1/
+    MaxReflectivity = (uint8)FCString::Atoi(*Surface.RightChop(12));
     MinReflectivity = 101;
   }
   else if (Surface.Contains(TEXT("PM_Diffuse"), ESearchCase::CaseSensitive)) {
