@@ -23,8 +23,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LiDAR Sensor")
   UStaticMeshComponent* LidarMeshComponent;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LiDAR Sensor")
-  class UVelodyneBaseComponent* Lidar;
+  //UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LiDAR Sensor")
+  //class UVelodyneBaseComponent* Lidar;
 
   class UUDPComponent* UdpScan;
 
@@ -35,17 +35,22 @@ protected:
 	// Called when the game end
   virtual void EndPlay(EEndPlayReason::Type Reason) override;
 
-	/**
-  * Set UDP communication parameters for scan data
-  */
-  void ConfigureUDPScan();
-
-  uint32 PacketTimestamp;
+	uint32 PacketTimestamp;
   std::chrono::steady_clock::time_point BeginTimestamp;
   std::chrono::steady_clock::time_point EndTimestamp;
 
 public:
-  void LidarThreadTick();
+  /**
+  * Set UDP communication parameters for scan data
+  */
+  virtual void ConfigureUDPScan(){}
+
+  /**
+  * Main routine
+  * calculate raytracing and generate LiDAR packet data
+  */
+  //void LidarThreadTick();
+  virtual void LidarThreadTick(){}
 
   class LidarThreadProcess* LidarThread = nullptr;
 

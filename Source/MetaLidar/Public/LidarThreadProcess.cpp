@@ -7,7 +7,6 @@ void LidarThreadProcess::Process()
   // Set during thread startup, can be modified any time!
   if(ThreadSleepTime.GetTotalSeconds() > 0)
   {
-    //JoyWait(ThreadSleepTime.GetTotalSeconds());
     //FPlatformProcess::SleepNoStats(ThreadSleepTime.GetTotalSeconds());
   }
 
