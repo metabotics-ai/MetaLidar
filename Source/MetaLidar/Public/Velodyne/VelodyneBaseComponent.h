@@ -20,13 +20,13 @@ class PacketGenerationTask;
 UENUM(BlueprintType)
 enum EModelName
 {
-  HDL_32     UMETA(DisplayName = "HDL-32"),
-  VLP16      UMETA(DisplayName = "VLP-16"),
-  PUCK_LITE	 UMETA(DisplayName = "Puck-Lite"),
-  PUCK_HIRES UMETA(DisplayName = "Puck-HiRes"),
-  VLP_32C    UMETA(DisplayName = "VLP-32C"),
-  VELARRAY   UMETA(DisplayName = "Velarray"),
-  VLS_128    UMETA(DisplayName = "VLS-128")
+  VLP16        UMETA(DisplayName = "VLP-16"),
+  PUCK_LITE    UMETA(DisplayName = "Puck-Lite"),
+  PUCK_HIRES   UMETA(DisplayName = "Puck-HiRes"),
+  VLP_32C      UMETA(DisplayName = "VLP-32C")
+  //VELARRAY   UMETA(DisplayName = "Velarray"),
+  //VLS_128    UMETA(DisplayName = "VLS-128")
+  //HDL_32     UMETA(DisplayName = "HDL-32"),
 };
 
 UENUM(BlueprintType)
@@ -42,8 +42,8 @@ UENUM(BlueprintType)
 enum ELaserReturnMode
 {
   Strongest  UMETA(DisplayName = "Strongest"),
-  LastReturn UMETA(DisplayName = "Last Return"),
-  DualReturn UMETA(DisplayName = "Dual Return")
+  //LastReturn UMETA(DisplayName = "Last Return"),
+  //DualReturn UMETA(DisplayName = "Dual Return")
 };
 
 USTRUCT()
@@ -98,9 +98,6 @@ public:
 
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velodyne")
   int32 PositionPort;
-
-  //UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velodyne")
-  //bool EnablePositionSensor;
 
   FVelodyneLidar Sensor;
 

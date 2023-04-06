@@ -18,11 +18,10 @@ UVelodyneBaseComponent::UVelodyneBaseComponent()
   SensorModel          = EModelName::VLP16;
   SamplingRate         = EFrequency::SR10;
   ReturnMode           = ELaserReturnMode::Strongest;
-  SensorIP             = FString(TEXT("192.168.1.201"));
-  DestinationIP        = FString(TEXT("192.168.1.100"));
+  SensorIP             = FString(TEXT("127.0.0.1"));
+  DestinationIP        = FString(TEXT("0.0.0.0"));
   ScanPort             = 2368;
   PositionPort         = 8308;
-  //EnablePositionSensor = false;
 }
 
 
@@ -49,19 +48,9 @@ void UVelodyneBaseComponent::EndPlay(EEndPlayReason::Type Reason)
 void UVelodyneBaseComponent::ConfigureVelodyneSensor()
 {
   switch (SensorModel.GetValue()) {
-  case 0:{
-    float Elevation[] = { 15.f, -1.f, 13.f, -3.f, 11.f, -5.f, 9.f, -7.f, 7.f, -9.f, 5.f, -11.f, 3.f, -13.f, 1.f, -15.f };
-    Sensor.ElevationAngle.Append(Elevation, UE_ARRAY_COUNT(Elevation));
-    Sensor.NumberLaserEmitter = 32;
-    Sensor.NumberDataBlock = 12;
-    Sensor.NumberDataChannel = 32;
-    Sensor.ModelNumber = 33;
-    Sensor.MinRange = 20.f;
-    Sensor.MaxRange = 10000.f;
-    break;
-    }
-  case 1:{
-    float Elevation[] = { -15.f, 1.f, -13.f, 3.f, -11.f, 5.f, -9.f, 7.f, -7.f, 9.f, -5.f, 11.f, -3.f, 13.f, -1.f, 15.f };
+  case 0:{ // VLP-16
+    float Elevation[] = {-15.f, 1.f, -13.f, 3.f, -11.f, 5.f, -9.f, 7.f,
+                        -7.f, 9.f, -5.f, 11.f, -3.f, 13.f, -1.f, 15.f};
     Sensor.ElevationAngle.Append(Elevation, UE_ARRAY_COUNT(Elevation));
     Sensor.NumberLaserEmitter = 16;
     Sensor.NumberDataBlock = 12;
@@ -71,8 +60,9 @@ void UVelodyneBaseComponent::ConfigureVelodyneSensor()
     Sensor.MaxRange = 10000.f;
     break;
     }
-  case 2:{
-    float Elevation[] = { -15.f, 1.f, -13.f, 3.f, -11.f, 5.f, -9.f, 7.f, -7.f, 9.f, -5.f, 11.f, -3.f, 13.f, -1.f, 15.f };
+  case 1:{ // PUCK-Lite
+    float Elevation[] = {-15.f, 1.f, -13.f, 3.f, -11.f, 5.f, -9.f, 7.f,
+                        -7.f, 9.f, -5.f, 11.f, -3.f, 13.f, -1.f, 15.f};
     Sensor.ElevationAngle.Append(Elevation, UE_ARRAY_COUNT(Elevation));
     Sensor.NumberLaserEmitter = 16;
     Sensor.NumberDataBlock = 12;
@@ -82,8 +72,9 @@ void UVelodyneBaseComponent::ConfigureVelodyneSensor()
     Sensor.MaxRange = 10000.f;
     break;
     }
-  case 3:{
-    float Elevation[] = { -10.f, 0.67f, -8.67f, 2.f, -7.33f, 3.33f, -6.f, 4.67f, -4.67f, 6.f, -3.33f, 7.33f, -2.f, 8.67f, -0.67f, 10.f };
+  case 2:{ // PUCK-HiRes
+    float Elevation[] = {-10.f, 0.67f, -8.67f, 2.f, -7.33f, 3.33f, -6.f, 4.67f,
+                        -4.67f, 6.f, -3.33f, 7.33f, -2.f, 8.67f, -0.67f, 10.f};
     Sensor.ElevationAngle.Append(Elevation, UE_ARRAY_COUNT(Elevation));
     Sensor.NumberLaserEmitter = 16;
     Sensor.NumberDataBlock = 12;
@@ -93,11 +84,15 @@ void UVelodyneBaseComponent::ConfigureVelodyneSensor()
     Sensor.MaxRange = 10000.f;
     break;
     }
-  case 4:{
-    float Elevation[] = { -25.f, -1.f, -1.667f, -15.639f, -11.31f, 0.f, -0.667f, -8.843f, -7.254f, 0.333f, -0.333f, -6.148f, -5.333f, 1.333f, 0.667f, -4.f,
-    -4.667f, 1.667f, 1.f, -3.667f, -3.333f, 3.333f, 2.333f, -2.667f, -3.f, 7.f, 4.667f, -2.333f, -2.f, 15.f, 10.333f, -1.333f};
-    float AzimuthOffset[] = { 1.4f, -4.2f, 1.4f, -1.4f, 1.4f, -1.4f, 4.2f, -1.4f, 1.4f, -4.2f, 1.4f, -1.4f, 4.2f, -1.4f, 4.2f, -1.4f,
-    1.4f, -4.2f, 1.4f, -4.2f, 4.2f, -1.4f, 1.4f, -1.4f, 1.4f, -1.4f, 1.4f, -4.2f, 4.2f, -1.4f, 1.4f, -1.4f };
+  case 3:{ // VLP-32C
+    float Elevation[] = {-25.f, -1.f, -1.667f, -15.639f, -11.31f, 0.f, -0.667f, -8.843f,
+                        -7.254f, 0.333f, -0.333f, -6.148f, -5.333f, 1.333f, 0.667f, -4.f,
+                        -4.667f, 1.667f, 1.f, -3.667f, -3.333f, 3.333f, 2.333f, -2.667f,
+                        -3.f, 7.f, 4.667f, -2.333f, -2.f, 15.f, 10.333f, -1.333f};
+    float AzimuthOffset[] = {1.4f, -4.2f, 1.4f, -1.4f, 1.4f, -1.4f, 4.2f, -1.4f,
+                            1.4f, -4.2f, 1.4f, -1.4f, 4.2f, -1.4f, 4.2f, -1.4f,
+                            1.4f, -4.2f, 1.4f, -4.2f, 4.2f, -1.4f, 1.4f, -1.4f,
+                            1.4f, -1.4f, 1.4f, -4.2f, 4.2f, -1.4f, 1.4f, -1.4f};
     Sensor.ElevationAngle.Append(Elevation, UE_ARRAY_COUNT(Elevation));
     Sensor.AzimuthOffset.Append(AzimuthOffset, UE_ARRAY_COUNT(AzimuthOffset));
     Sensor.NumberLaserEmitter = 32;
@@ -108,8 +103,9 @@ void UVelodyneBaseComponent::ConfigureVelodyneSensor()
     Sensor.MaxRange = 10000.f;
     break;
     }
-  case 5:{
-    float Elevation[] = { 15.f, -1.f, 13.f, -3.f, 11.f, -5.f, 9.f, -7.f, 7.f, -9.f, 5.f, -11.f, 3.f, -13.f, 1.f, -15.f };
+  case 4:{ // VELARRAY : Not implemented
+    float Elevation[] = {15.f, -1.f, 13.f, -3.f, 11.f, -5.f, 9.f, -7.f,
+                        7.f, -9.f, 5.f, -11.f, 3.f, -13.f, 1.f, -15.f};
     Sensor.ElevationAngle.Append(Elevation, UE_ARRAY_COUNT(Elevation));
     Sensor.NumberLaserEmitter = 32;
     Sensor.NumberDataBlock = 12;
@@ -119,13 +115,26 @@ void UVelodyneBaseComponent::ConfigureVelodyneSensor()
     Sensor.MaxRange = 8000.f;
     break;
     }
-  case 6:{
-    float Elevation[] = { 15.f, -1.f, 13.f, -3.f, 11.f, -5.f, 9.f, -7.f, 7.f, -9.f, 5.f, -11.f, 3.f, -13.f, 1.f, -15.f };
+  case 5:{ // VLS_128 : Not implemented
+    float Elevation[] = {15.f, -1.f, 13.f, -3.f, 11.f, -5.f, 9.f, -7.f,
+                        7.f, -9.f, 5.f, -11.f, 3.f, -13.f, 1.f, -15.f};
     Sensor.ElevationAngle.Append(Elevation, UE_ARRAY_COUNT(Elevation));
     Sensor.NumberLaserEmitter = 128;
     Sensor.NumberDataBlock = 12;
     Sensor.NumberDataChannel = 32;
     Sensor.ModelNumber = 161;
+    Sensor.MinRange = 20.f;
+    Sensor.MaxRange = 10000.f;
+    break;
+    }
+  case 6:{ // HDL-32 : Not implemented
+    float Elevation[] = {15.f, -1.f, 13.f, -3.f, 11.f, -5.f, 9.f, -7.f,
+                        7.f, -9.f, 5.f, -11.f, 3.f, -13.f, 1.f, -15.f};
+    Sensor.ElevationAngle.Append(Elevation, UE_ARRAY_COUNT(Elevation));
+    Sensor.NumberLaserEmitter = 32;
+    Sensor.NumberDataBlock = 12;
+    Sensor.NumberDataChannel = 32;
+    Sensor.ModelNumber = 33;
     Sensor.MinRange = 20.f;
     Sensor.MaxRange = 10000.f;
     break;
@@ -154,10 +163,10 @@ void UVelodyneBaseComponent::ConfigureVelodyneSensor()
   case 0:
     Sensor.ReturnMode = 55;
     break;
-  case 1:
+  case 1: // Last Return : Not implemented
     Sensor.ReturnMode = 56;
     break;
-  case 2:
+  case 2: // Dual Return : Not implemented
     Sensor.ReturnMode = 57;
     break;
   }
@@ -214,7 +223,6 @@ void UVelodyneBaseComponent::GetScanData()
   FCollisionQueryParams TraceParams = FCollisionQueryParams(TEXT("LaserTrace"), true, GetOwner());
   TraceParams.bReturnPhysicalMaterial = true;
   TraceParams.bTraceComplex = true;
-  //TraceParams.bReturnFaceIndex = true;
 
   // Get owner's location and rotation
   FVector LidarPosition = this->GetActorLocation();
@@ -320,7 +328,6 @@ void UVelodyneBaseComponent::GenerateDataPacket(uint32 TimeStamp)
     uint16 Distance = 0;
     if (Sensor.RecordedHits[Index].bBlockingHit) {
       Distance = ((Sensor.RecordedHits[Index].Distance + Sensor.MinRange) * 10) / 2; // 2mm resolution
-      //DrawDebugLine(GetWorld(), Sensor.RecordedHits[Index].TraceStart, Sensor.RecordedHits[Index].TraceEnd, FColor::Green, false, 0.1f, 0, 0.5);
     }
     DistanceData[0] = Distance & 0x00FF;
     DistanceData[1] = (Distance & 0xFF00) >> 8;
