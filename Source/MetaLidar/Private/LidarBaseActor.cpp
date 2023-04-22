@@ -13,8 +13,8 @@ ALidarBaseActor::ALidarBaseActor() : PacketTimestamp(0)
   LidarMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RootComponent"));
   RootComponent = LidarMeshComponent;
 
-  UdpScan = CreateDefaultSubobject<UUDPComponent>("UdpComponent");
-  this->AddOwnedComponent(UdpScan);
+  UdpScanComponent = CreateDefaultSubobject<UUDPComponent>("UdpComponent");
+  this->AddOwnedComponent(UdpScanComponent);
 }
 
 // Called when the game starts or when spawned

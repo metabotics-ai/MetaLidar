@@ -20,13 +20,10 @@ public:
   // Sets default values for this actor's properties
   ALidarBaseActor();
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LiDAR Sensor")
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MetaLidar")
   UStaticMeshComponent* LidarMeshComponent;
 
-  //UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LiDAR Sensor")
-  //class UVelodyneBaseComponent* Lidar;
-
-  class UUDPComponent* UdpScan;
+  class UUDPComponent* UdpScanComponent;
 
 protected:
   // Called when the game starts or when spawned
@@ -49,7 +46,6 @@ public:
   * Main routine
   * calculate raytracing and generate LiDAR packet data
   */
-  //void LidarThreadTick();
   virtual void LidarThreadTick(){}
 
   class LidarThreadProcess* LidarThread = nullptr;
