@@ -3,13 +3,6 @@
 
 void LidarThreadProcess::Process()
 {
-  // Throttle Thread to avoid consuming un-needed resources
-  // Set during thread startup, can be modified any time!
-  if(ThreadSleepTime.GetTotalSeconds() > 0)
-  {
-    //FPlatformProcess::SleepNoStats(ThreadSleepTime.GetTotalSeconds());
-  }
-
   if(!LidarActor)
   {
     return;
