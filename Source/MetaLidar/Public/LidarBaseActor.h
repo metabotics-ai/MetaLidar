@@ -14,13 +14,13 @@ THIRD_PARTY_INCLUDES_END
 UCLASS()
 class METALIDAR_API ALidarBaseActor : public AActor
 {
-	GENERATED_BODY()
+  GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
-	ALidarBaseActor();
+  // Sets default values for this actor's properties
+  ALidarBaseActor();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LiDAR Sensor")
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LiDAR Sensor")
   UStaticMeshComponent* LidarMeshComponent;
 
   //UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LiDAR Sensor")
@@ -29,13 +29,13 @@ public:
   class UUDPComponent* UdpScan;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+  // Called when the game starts or when spawned
+  virtual void BeginPlay() override;
 
-	// Called when the game end
+  // Called when the game end
   virtual void EndPlay(EEndPlayReason::Type Reason) override;
 
-	uint32 PacketTimestamp;
+  uint32 PacketTimestamp;
   std::chrono::steady_clock::time_point BeginTimestamp;
   std::chrono::steady_clock::time_point EndTimestamp;
 

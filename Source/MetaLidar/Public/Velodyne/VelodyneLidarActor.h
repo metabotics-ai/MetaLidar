@@ -12,20 +12,20 @@
 UCLASS()
 class METALIDAR_API AVelodyneLidarActor : public ALidarBaseActor
 {
-	GENERATED_BODY()
+  GENERATED_BODY()
 
 public:
   // Sets default values for this actor's properties
-	AVelodyneLidarActor();
+  AVelodyneLidarActor();
 
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LiDAR Sensor")
   class UVelodyneBaseComponent* Lidar;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+  // Called when the game starts or when spawned
+  virtual void BeginPlay() override;
 
-	// Called when the game end
+  // Called when the game end
   virtual void EndPlay(EEndPlayReason::Type Reason) override;
 
 public:

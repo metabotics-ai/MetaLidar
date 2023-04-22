@@ -111,7 +111,6 @@ void AVelodyneLidarActor::LidarThreadTick()
   {
     FPlatformProcess::SleepNoStats(0);
   }
-  //UE_LOG(LogTemp, Warning, TEXT("Processing time: %f ms, Time diff : %u Ms"), std::chrono::duration_cast<std::chrono::microseconds>(End - Begin).count()*0.001f, TimeDiffMs);
 }
 
 void AVelodyneLidarActor::ConfigureUDPScan()

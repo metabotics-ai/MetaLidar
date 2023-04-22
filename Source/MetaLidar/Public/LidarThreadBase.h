@@ -1,11 +1,5 @@
 /*
 * This is based on Rama's UE Multi-threading
-*
-*	This is a Throttled Thread, because you indicate the tick rate when creating the thread.
-*
-*	I recommend 0.01 seconds for something that has to run "continously"
-*
-*	By Rama
 */
 #pragma once
 
@@ -54,22 +48,22 @@ public:
 public:
   // FSingleThreadRunnable interface
 
-	// Returns a pointer to the single threaded interface when mulithreading is disabled.
-	virtual FSingleThreadRunnable* GetSingleThreadInterface() override
-	{
-		return this;
-	}
+  // Returns a pointer to the single threaded interface when mulithreading is disabled.
+  virtual FSingleThreadRunnable* GetSingleThreadInterface() override
+  {
+    return this;
+  }
 
   // FSingleThreadRunnable interface
-	virtual void Tick() override
-	{
-		Process();
-	}
+  virtual void Tick() override
+  {
+    Process();
+  }
 
-	//~~~~~~~~~~~~~~~~~~~~~~~
-	//To be Subclassed
-	virtual void Process() {}
-	//~~~~~~~~~~~~~~~~~~~~~~~
+  //~~~~~~~~~~~~~~~~~~~~~~~
+  //To be Subclassed
+  virtual void Process() {}
+  //~~~~~~~~~~~~~~~~~~~~~~~
 
 public:
   // FRunnable interface

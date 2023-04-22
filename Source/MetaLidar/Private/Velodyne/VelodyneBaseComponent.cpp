@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Velodyne/VelodyneBaseComponent.h"
 
 
@@ -237,7 +236,6 @@ void UVelodyneBaseComponent::GetScanData()
   const int DivideEnd = FMath::FloorToInt((float)(Sensor.RecordedHits.Num() / ThreadNum));
 
   ParallelFor(
-    //Sensor.RecordedHits.Num(),
     ThreadNum,
     [&](int32 PFIndex)
     {
