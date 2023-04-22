@@ -18,8 +18,8 @@ public:
   // Sets default values for this actor's properties
   AVelodyneLidarActor();
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LiDAR Sensor")
-  class UVelodyneBaseComponent* Lidar;
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MetaLidar")
+  class UVelodyneBaseComponent* LidarComponent;
 
 protected:
   // Called when the game starts or when spawned
