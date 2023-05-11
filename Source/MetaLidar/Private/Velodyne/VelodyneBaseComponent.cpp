@@ -460,71 +460,70 @@ void UVelodyneBaseComponent::GeneratePositionPacket(uint32 TimeStamp)
   FMemory::Memcpy(Sensor.PositionPacket.GetData() + PacketIndex, ReservedPacket, UE_ARRAY_COUNT(ReservedPacket));
 }
 
-std::string UVelodyneBaseComponent::DecToHexa(int n)
+FString UVelodyneBaseComponent::DecToHex(int DecimalNumber)
 {
   // char array to store hexadecimal number
-  char hexaDeciNum[100];
+  char HexaDeciNum[100];
 
   // counter for hexadecimal number array
   int i = 0;
-  while (n != 0)
+  while (DecimalNumber != 0)
   {
     // temporary variable to store remainder
-    int temp = 0;
+    int Temp = 0;
 
     // storing remainder in temp variable.
-    temp = n % 16;
+    Temp = DecimalNumber % 16;
 
-    // check if temp < 10
-    if (temp < 10) {
-      hexaDeciNum[i] = temp + 48;
+    // check if Temp < 10
+    if (Temp < 10) {
+      HexaDeciNum[i] = Temp + 48;
       i++;
     }
     else {
-      hexaDeciNum[i] = temp + 55;
+      HexaDeciNum[i] = Temp + 55;
       i++;
     }
 
-    n = n / 16;
+    DecimalNumber = DecimalNumber / 16;
   }
 
-  std::string answer = "";
+  FString Answer;
 
   // printing hexadecimal number array in reverse order
   for (int j = i - 1; j >= 0; j--) {
-    answer += hexaDeciNum[j];
+    Answer += HexaDeciNum[j];
   }
 
-  return answer;
+  return Answer;
 }
 
-void UVelodyneBaseComponent::ASCIItoHEX(std::string ascii, uint8 hex[])
+void UVelodyneBaseComponent::ASCIItoHEX(FString Ascii, uint8 Hex[])
 {
   // Initialize final String
-  std::string strhex = "";
+  FString StrHex = "";
 
   // Make a loop to iterate through
   // every character of ascii string
-  for (int i = 0; i < ascii.length(); i++)
+  for (int i = 0; i < Ascii.Len(); i++)
   {
     // Take a char from
     // position i of string
-    char ch = ascii[i];
+    //char ch = Ascii[i];
 
     // Cast char to integer and
     // find its ascii value
-    int tmp = (int)ch;
+    //int tmp = (int)ch;
 
     // Change this ascii value
     // integer to hexadecimal value
-    std::string part = DecToHexa(tmp);
+    FString Part = DecToHex((int)Ascii[i]);
 
     // Add this hexadecimal value
     // to final string.
-    strhex += part;
+    StrHex += Part;
   }
 
-  // Return the final
-  // string hex
-  strcpy( reinterpret_cast<char*>( hex ), strhex.c_str() );
+  // Return the final string hex
+  strcpy( reinterpret_cast<char*>( Hex ), TCHAR_TO_ANSI(*StrHex));
 }

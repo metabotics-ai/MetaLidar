@@ -149,12 +149,12 @@ public:
   /**
   * Convert decimal to hexadecimal.
   */
-  std::string DecToHexa(int n);
+  FString DecToHex(int DecimalNumber);
 
   /**
   * Convert ASCII to HEX.
   */
-  void ASCIItoHEX(std::string ascii, uint8 hex[]);
+  void ASCIItoHEX(FString Ascii, uint8 Hex[]);
 
 protected:
   // Called when the game starts
