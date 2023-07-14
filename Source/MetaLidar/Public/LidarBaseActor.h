@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GenericPlatform/GenericPlatformTime.h"
 #include "LidarThreadProcess.h"
 THIRD_PARTY_INCLUDES_START
 #include <UDPComponent.h>
-#include <Velodyne/VelodyneBaseComponent.h>
 THIRD_PARTY_INCLUDES_END
 #include "LidarBaseActor.generated.h"
 
@@ -32,9 +32,8 @@ protected:
   // Called when the game end
   virtual void EndPlay(EEndPlayReason::Type Reason) override;
 
-  uint32 PacketTimestamp;
-  std::chrono::steady_clock::time_point BeginTimestamp;
-  std::chrono::steady_clock::time_point EndTimestamp;
+  uint32 PacketTimestamp  = 0;
+  double BeginTimestamp   = 0.0;
 
 public:
   /**

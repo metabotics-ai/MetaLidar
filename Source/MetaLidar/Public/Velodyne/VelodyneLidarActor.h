@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Velodyne/VelodyneBaseComponent.h"
 #include "LidarBaseActor.h"
 #include "VelodyneLidarActor.generated.h"
 
