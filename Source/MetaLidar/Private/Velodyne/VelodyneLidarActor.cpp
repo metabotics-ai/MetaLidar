@@ -70,7 +70,6 @@ void AVelodyneLidarActor::EndPlay(EEndPlayReason::Type Reason)
 // This would be a verrrrry large hitch if done on game thread!
 void AVelodyneLidarActor::LidarThreadTick()
 {
-  int64 Begin      = 0;
   float TimeDiffMs = 0;
 
   //! Make sure to come all the way out of all function routines with this same check
