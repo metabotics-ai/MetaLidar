@@ -70,10 +70,8 @@ void AVelodyneLidarActor::EndPlay(EEndPlayReason::Type Reason)
 // This would be a verrrrry large hitch if done on game thread!
 void AVelodyneLidarActor::LidarThreadTick()
 {
-  std::chrono::steady_clock::time_point Begin = std::chrono::steady_clock::now();
-  std::chrono::steady_clock::time_point End = std::chrono::steady_clock::now();
-
-  uint32 TimeDiffMs = 0;
+  int64 Begin      = 0;
+  float TimeDiffMs = 0;
 
   //! Make sure to come all the way out of all function routines with this same check
   //! so as to ensure thread exits as quickly as possible, allowing game thread to finish
@@ -83,11 +81,15 @@ void AVelodyneLidarActor::LidarThreadTick()
     return;
   }
 
-  EndTimestamp = std::chrono::steady_clock::now();
-  PacketTimestamp += (uint32)(std::chrono::duration_cast<std::chrono::microseconds>(EndTimestamp - BeginTimestamp).count());
-  BeginTimestamp = std::chrono::steady_clock::now();
-
-  Begin = std::chrono::steady_clock::now();
+  if ( BeginTimestamp == 0 )
+  {
+    PacketTimestamp = 0;
+  }
+  else
+  {
+    PacketTimestamp += (uint32)(1e6 * (FPlatformTime::Seconds() - BeginTimestamp));
+  }
+  BeginTimestamp = FPlatformTime::Seconds();
 
   // Generate raycasting data
   LidarComponent->GetScanData();
@@ -98,14 +100,11 @@ void AVelodyneLidarActor::LidarThreadTick()
   // Multicast Delegate event for broadcating packet data
   UdpScanComponent->EmitBytes(LidarComponent->Sensor.DataPacket);
 
-  End = std::chrono::steady_clock::now();
+  TimeDiffMs = (float)(FPlatformTime::Seconds() - BeginTimestamp);
 
-  TimeDiffMs = (uint32)(LidarThread->ThreadSleepTime.GetTotalMicroseconds() -
-    std::chrono::duration_cast<std::chrono::microseconds>(End - Begin).count());
-
-  if( TimeDiffMs > 0 )
+  if( TimeDiffMs > 0.0f )
   {
-    FPlatformProcess::SleepNoStats(0.000001f * TimeDiffMs);
+    FPlatformProcess::SleepNoStats(TimeDiffMs);
   }
   else
   {
