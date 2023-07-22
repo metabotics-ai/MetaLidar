@@ -1,5 +1,6 @@
 # MetaLidar
 A plugin that simulates LiDAR sensor data built on top of Unreal Engine.
+![MetaLidar_intro](Resources/MetaLidar_intro.gif)
 
 # Supported Platform
 Linux
