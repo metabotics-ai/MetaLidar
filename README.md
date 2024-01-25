@@ -18,13 +18,14 @@ Currently, following sensor models are supported:
 
 
 # Tested Environments
+This repo aims to track latest release version of the Unreal Engine.
 |Element|Requirement|
 |:------:|---|
 |**OS**|Ubuntu 22.04|
 |**CPU**|Intel Core i9-12900K|
 |**RAM**|64GB|
 |**GPU**|RTX 3070Ti|
-|**UE5**|v5.1.x, v5.2.0, v5.2.1|
+|**UE5**|v5.2.1, v5.3.2|
 
 # Quickstart Guide
 The MetaLidar plugin should be installed in the 'Plugins' folder inside your Unreal Engine 5 project. Also, you should install the [**UDP-Unreal**](https://github.com/getnamo/UDP-Unreal/releases/tag/v2.1.0) plugin, which is a convenience *ActorComponent* UDP wrapper for Unreal Engine. After launching the Unreal Editor, make sure that both plugins are enabled.
